@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+>
+
+    <data>
+        <import type="android.view.View" />
+        <variable
+            name="data"
+            type="com.pluang.imagesearchapp.data.database.entities.Photo" />
+
+        <variable
+            name="callback"
+            type="com.pluang.imagesearchapp.paging.BaseListItemCallback" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bottom_round_white_bg"
+        android:onClick="@{() -> callback.onItemClicked(data)}">
+
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:id="@+id/imageViewAvatar"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            loadChannelImageOne="@{data.imageUrl()}"
+            app:layout_constraintDimensionRatio="1:1"
+            android:clickable="false"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

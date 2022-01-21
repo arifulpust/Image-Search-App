@@ -1,76 +1,56 @@
 package com.pluang.imagesearchapp.ui.main.view
 
-import android.content.Intent
 import android.os.Bundle
 import android.text.TextWatcher
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.lifecycleScope
-import com.pluang.imagesearchapp.data.database.entities.Schedule
-import com.pluang.imagesearchapp.data.model.User
 import com.pluang.imagesearchapp.databinding.ActivityMainBinding
 import com.pluang.imagesearchapp.paging.BaseListItemCallback
-import com.pluang.imagesearchapp.ui.main.Listener.SchedulerClickListener
-import com.pluang.imagesearchapp.ui.main.adapter.MainAdapter
-import com.pluang.imagesearchapp.ui.main.adapter.ScheduleAdapter
 import com.pluang.imagesearchapp.ui.main.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import com.pluang.imagesearchapp.R
 import android.view.inputmethod.EditorInfo
-
-import timber.log.Timber
+import androidx.core.widget.doAfterTextChanged
+import androidx.paging.map
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.pluang.imagesearchapp.data.database.entities.Photo
+import com.pluang.imagesearchapp.extension.hideKeyboard
+import com.pluang.imagesearchapp.ui.main.adapter.PhotoAdapter
+import com.pluang.imagesearchapp.utils.SEARCH_KEY
 
 
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(), BaseListItemCallback<User> , SchedulerClickListener {
-    private var listJob: Job? = null
-    private lateinit var adapters: MainAdapter
-    private  var scheduleAdapter: ScheduleAdapter?=null
+class MainActivity : AppCompatActivity(), BaseListItemCallback<Photo>  {
+    private lateinit var adapters: PhotoAdapter
 
     private val mainViewModel by viewModels<MainViewModel>()
     private var _binding: ActivityMainBinding? = null
     private val binding get() = _binding!!
     private var searchWatcher: TextWatcher? = null
     private var search: String = ""
-     var offline: Boolean ?=false
-     var isActive: Boolean ?=false
-    private var scheduleList: List<Schedule>?=null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        adapters = MainAdapter(this)
-        observeListId()
-
         setSupportActionBar(binding.toolbar)
-//        lifecycleScope.launchWhenResumed {
-//            adapters.loadStateFlow.collectLatest {
-//                val isLoading = it.source.refresh is LoadState.Loading || !isInitialized
-//                val isEmpty = adapters.itemCount <= 0 && ! it.source.refresh.endOfPaginationReached
-//                binding.placeholder.isVisible = isLoading
-//                binding.recyclerView.isVisible = !isEmpty && !isLoading
-//                binding.etSearch.isVisible = !isEmpty && !isLoading
-//              //  binding.placeholder.showLoadingAnimation(isLoading)
-//                adapters.withLoadStateFooter(ListLoadStateAdapter { adapters.retry() })
-//                binding.recyclerView.layoutManager = LinearLayoutManager(this@MainActivity, LinearLayoutManager.VERTICAL, false)
-//                binding.recyclerView.adapter = adapters
-//                isInitialized = true
-//                binding.recyclerView.setHasFixedSize(true)
-//            }
-//        }
+
+        adapters = PhotoAdapter(this)
+
+                binding.recPhoto.layoutManager = LinearLayoutManager(this)
+        binding.recPhoto.adapter = adapters
         binding.etSearch.setOnEditorActionListener( { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-Log.e("Done","done")
-           Timber.e("done")
+hideKeyboard()
+                observeLatestDataList()
                 true
             } else false
         })
@@ -79,7 +59,7 @@ Log.e("Done","done")
 
         searchWatcher = binding.etSearch.doAfterTextChanged {
             search = it.toString()
-
+            SEARCH_KEY=search.trim()
 
         }
 
@@ -105,14 +85,43 @@ Log.e("Done","done")
         }
     }
 
-    override fun onItemClicked(item: User) {
+    override fun onItemClicked(item: Photo) {
         super.onItemClicked(item)
-        val shareIntent= Intent(this, DetailsActivity::class.java)
-        shareIntent.putExtra("name",item.login)
-        shareIntent.putExtra("id",item.id)
-        shareIntent.putExtra("avatar",item.avatar_url)
-        shareIntent.putExtra("note",item.note)
-        startActivity(shareIntent)
+        Log.e("item",item.toString())
+
+    }
+
+    private fun observeLatestDataList() {
+        Log.e("SEARCH_KEY",SEARCH_KEY)
+     lifecycleScope.launchWhenResumed {
+            adapters.refresh()
+            mainViewModel.loadLatestData().collectLatest {
+                adapters.submitData(it.map { channel ->
+//                    try {
+//                        if (scheduleList?.size!!>0 && scheduleList!=null)
+//                        {
+//                            for(list in scheduleList!!){
+//                                if (channel.id==list.id){
+//                                    Log.e("list.note","list.note"+list.note)
+//                                    //    Log.e("list.note","list.note"+scheduleList?.size)
+//                                    channel.apply {
+//                                        note = list.note
+//                                    }
+//                                }
+//
+//
+//                            }
+//                        }
+//                    } catch (e: Exception) {
+//                    }
+
+                   // mainViewModel.insertData(channel)
+                    channel
+                })
+            }
+
+
+        }
     }
 //    private fun searchList(name:String){
 //
@@ -165,24 +174,7 @@ Log.e("Done","done")
 //
 //    }
 
-    private fun observeListId(){
-        lifecycleScope.launchWhenStarted {
-            mainViewModel.getData().collectLatest {
-                Log.e("UPLOAD 2", "Collecting ->>> ${it.size}")
-                if(it.isNotEmpty())
-                {
 
-
-                    Log.e("data","data"+it.size)
-                    scheduleList=it
-                }
-                else{
-
-                }
-
-            }
-        }
-    }
 //    fun searchData( scheduleList: List<Schedule>){
 //        binding.recyclerViewSearch.layoutManager =LinearLayoutManager(this)
 //        scheduleAdapter = ScheduleAdapter(this, scheduleList,this)
@@ -191,12 +183,5 @@ Log.e("Done","done")
 
 
 
-    override fun show(user: Schedule) {
-        val shareIntent= Intent(this, DetailsActivity::class.java)
-        shareIntent.putExtra("name",user.login)
-        shareIntent.putExtra("id",user.id)
-        shareIntent.putExtra("avatar",user.avatar_url)
-        shareIntent.putExtra("note",user.note)
-        startActivity(shareIntent)
-    }
+
 }

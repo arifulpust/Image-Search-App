@@ -1,22 +1,19 @@
 package com.pluang.imagesearchapp.data.api
 
-import com.pluang.imagesearchapp.data.model.User
+import com.pluang.imagesearchapp.data.models.PhotosResponse
+import com.pluang.imagesearchapp.utils.KEY
 import retrofit2.Response
 import retrofit2.http.GET
-import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface ApiService {
 
-    @GET("users")
-    suspend fun getUsers(): Response<List<User>>
-    @GET("users?")
-    suspend fun getUser(
-        @Query("since") offset: Int,
-    ): Response<List<User>>
+    @GET("https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key="+KEY+"&format=json&nojsoncallback=1&sort=relevance")
+    suspend fun getImages(
+        @Query("per_page") perPage: Int,
+        @Query("page") page: Int,
+        @Query("text") searchKey: String,
+    ): Response<PhotosResponse>
 
-    @GET("users/{name}")
-    suspend fun getUserDetails(
-        @Path("name") name: String?,
-    ): Response<User>
+
 }

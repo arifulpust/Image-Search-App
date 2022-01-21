@@ -4,6 +4,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
+import com.pluang.imagesearchapp.utils.LIMIT
 import kotlinx.coroutines.flow.Flow
 
 class BaseListRepositoryImpl<T: Any> constructor(
@@ -11,19 +12,9 @@ class BaseListRepositoryImpl<T: Any> constructor(
 ): BaseListRepository<T> {
     override fun getList(): Flow<PagingData<T>> {
         return Pager(
-            config = PagingConfig(
-                PAGE_SIZE,
-                enablePlaceholders = true,
-                initialLoadSize = PAGE_SIZE,
-                prefetchDistance = if(PAGE_SIZE > 30) PAGE_SIZE / 2 else 10,
-//                maxSize = 2 * PAGE_SIZE
-            ),
-//            remoteMediator = remoteMediator,
+            config = PagingConfig(pageSize = LIMIT, prefetchDistance = 2),
             pagingSourceFactory = pagingFactory
         ).flow
     }
 
-    companion object {
-        const val PAGE_SIZE = 30
-    }
 }

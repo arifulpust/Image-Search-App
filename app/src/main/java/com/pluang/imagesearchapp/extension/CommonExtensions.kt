@@ -1,8 +1,13 @@
 package com.pluang.imagesearchapp.extension
+import android.app.Activity
+import android.content.Context
 import android.content.res.Resources
+import android.view.KeyEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import androidx.core.view.forEach
+import androidx.fragment.app.Fragment
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -59,6 +64,49 @@ fun Long.toFormattedDate(): String{
     val dateGMT = cal.time
     val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US)
     return sdf.format(dateGMT)
+}
+/*========= Hide Keyboard ===============*/
+fun Fragment.hideKeyboard() {
+    view?.let { activity?.hideKeyboard(it) }
+}
+
+fun Fragment.showeKeyboard() {
+    view?.let { activity?.showKeypad(it) }
+
+
+}
+
+fun Fragment.keypadShow() {
+    val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+    imm!!.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
+}
+
+public val onSoftKeyboardDonePress =
+    View.OnKeyListener { v, keyCode, event ->
+        if (event.keyCode === KeyEvent.KEYCODE_ENTER) {
+        }
+        false
+    }
+public val onSoftKeyboardNextPress =
+    View.OnKeyListener { v, keyCode, event ->
+        if (event.keyCode === KeyEvent.KEYCODE_MEDIA_NEXT) {
+        }
+        false
+    }
+
+fun Activity.hideKeyboard() {
+    hideKeyboard(currentFocus ?: View(this))
+}
+
+fun Context.hideKeyboard(view: View) {
+    val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+    inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
+}
+
+fun Context.showKeypad(view: View) {
+    val imm =
+        getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
 }
 
 

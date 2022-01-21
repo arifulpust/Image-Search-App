@@ -2,10 +2,10 @@ package com.pluang.imagesearchapp.di.module
 
 import android.content.Context
 import androidx.room.Room
-import com.pluang.imagesearchapp.data.database.Dao.ScheduleDao
-import com.pluang.imagesearchapp.data.database.SchedulerDatabase
-import com.pluang.imagesearchapp.data.database.repository.ScheduleRepository
-import com.pluang.imagesearchapp.data.database.repository.impl.ScheduleRepositoryImpl
+import com.pluang.imagesearchapp.data.database.Dao.photoDao
+import com.pluang.imagesearchapp.data.database.PhotoDatabase
+import com.pluang.imagesearchapp.data.database.repository.PhotoRepository
+import com.pluang.imagesearchapp.data.database.repository.impl.PhotoRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -19,9 +19,9 @@ object DatabaseModule {
 
     @Provides
     @Singleton
-    fun providesDatabase(@ApplicationContext app: Context): SchedulerDatabase {
+    fun providesDatabase(@ApplicationContext app: Context): PhotoDatabase {
         return Room.databaseBuilder(app,
-            SchedulerDatabase::class.java, SchedulerDatabase.DB_NAME)
+            PhotoDatabase::class.java, PhotoDatabase.DB_NAME)
             .allowMainThreadQueries()
 //            .fallbackToDestructiveMigration()
             .build()
@@ -29,14 +29,14 @@ object DatabaseModule {
 
     @Provides
     @Singleton
-    fun providesSchedulerDao(db: SchedulerDatabase): ScheduleDao {
+    fun providesSchedulerDao(db: PhotoDatabase): photoDao {
         return db.getScheduleDao()
     }
 
 
     @Singleton
     @Provides
-    fun providesSchedulerRepository(dao: ScheduleDao): ScheduleRepository {
-        return ScheduleRepositoryImpl(dao)
+    fun providesSchedulerRepository(dao: photoDao): PhotoRepository {
+        return PhotoRepositoryImpl(dao)
     }
 }
