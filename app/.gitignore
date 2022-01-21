@@ -1,0 +1,25 @@
+#built application files
+*.apk
+*.ap_
+*.aab
+.gradle
+.DS_Store
+/build
+local.properties
+/app/release
+/.idea/
+/.gradle/
+*/build/
+*.iml
+.idea
+#.idea/workspace.xml - remove # and delete .idea if it better suit your needs.
+build/
+.navigation
+captures/
+output.json
+
+#NDK
+obj/
+.externalNativeBuild
+# Android Profiling
+*.hprof

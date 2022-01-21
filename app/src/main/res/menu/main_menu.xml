@@ -1,0 +1,14 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item  android:id="@+id/collumn_two"
+        android:title="@string/two_collumn"
+        />
+    <item  android:id="@+id/collumn_three"
+        android:title="@string/three_collumn"
+        />
+    <item  android:id="@+id/collumn_four"
+        android:title="@string/four_collumn"
+        app:showAsAction="withText"
+        />
+</menu>
