@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">Image Search App</string>
-    <string name="two_collumn">Two Collumn</string>
-    <string name="three_collumn">Three Collumn</string>
-    <string name="four_collumn">Four Collumn</string>
+    <string name="txt_two_collumn">Two Collumn</string>
+    <string name="txt_three_collumn">Three Collumn</string>
+    <string name="txt_four_collumn">Four Collumn</string>
     <string name="txt_enter_search_key">Enter your search keyword</string>
 
 </resources>

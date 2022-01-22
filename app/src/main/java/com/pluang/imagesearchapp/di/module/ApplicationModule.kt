@@ -9,8 +9,6 @@ import com.pluang.imagesearchapp.data.api.ApiHelperImpl
 import com.pluang.imagesearchapp.data.api.ApiService
 import com.pluang.imagesearchapp.data.interceptor.CoilInterceptor
 
-import com.squareup.moshi.Moshi
-
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,20 +16,15 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
-
-import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Qualifier
 import javax.inject.Singleton
 import okhttp3.Cache
 import retrofit2.converter.gson.GsonConverterFactory
 
-@Qualifier
-annotation class DefaultCache
 @Qualifier
 annotation class CoilCache
 
@@ -56,7 +49,6 @@ class ApplicationModule {
             .retryOnConnectionFailure(false)
             .addNetworkInterceptor(StethoInterceptor())
            .  addInterceptor(CoilInterceptor())
-
             .build()
     } else OkHttpClient
         .Builder()
@@ -69,18 +61,10 @@ class ApplicationModule {
         okHttpClient: OkHttpClient,url: String
     ): Retrofit =
         Retrofit.Builder()
-         // .addConverterFactory(MoshiConverterFactory.create())
             .baseUrl(url)
             .addConverterFactory(GsonConverterFactory.create())
             .client(okHttpClient)
             .build()
-//    @Provides
-//    @Singleton
-//    @DefaultCache
-//    fun getCacheIterator(@ApplicationContext ctx: Context): Cache{
-//        val cacheSize = 100 * 1024 * 1024 // 100 MB
-//        return Cache(ctx.cacheDir, cacheSize.toLong())
-//    }
 
     @Provides
     @Singleton

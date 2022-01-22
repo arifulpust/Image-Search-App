@@ -2,13 +2,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item  android:id="@+id/collumn_two"
-        android:title="@string/two_collumn"
+        android:title="@string/txt_two_collumn"
         />
     <item  android:id="@+id/collumn_three"
-        android:title="@string/three_collumn"
+        android:title="@string/txt_three_collumn"
         />
     <item  android:id="@+id/collumn_four"
-        android:title="@string/four_collumn"
+        android:title="@string/txt_four_collumn"
         app:showAsAction="withText"
         />
 </menu>

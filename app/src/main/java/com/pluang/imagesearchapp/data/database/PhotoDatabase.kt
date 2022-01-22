@@ -14,8 +14,6 @@ import com.pluang.imagesearchapp.data.database.entities.Photo
 
 abstract class PhotoDatabase : RoomDatabase() {
     abstract fun getPhotoDao(): photoDao
-
-
     companion object {
         const val DB_NAME = "photo-search-app-db"
     }

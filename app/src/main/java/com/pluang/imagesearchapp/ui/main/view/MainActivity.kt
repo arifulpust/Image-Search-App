@@ -2,7 +2,6 @@ package com.pluang.imagesearchapp.ui.main.view
 
 import android.os.Bundle
 import android.text.TextWatcher
-import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.pluang.imagesearchapp.databinding.ActivityMainBinding
@@ -16,12 +15,10 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.EditorInfo
-import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 
 import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.lifecycleScope
-import androidx.paging.LoadState
 import androidx.paging.map
 import androidx.recyclerview.widget.GridLayoutManager
 import com.pluang.imagesearchapp.R
@@ -30,11 +27,12 @@ import com.pluang.imagesearchapp.extension.Status
 import com.pluang.imagesearchapp.extension.hideKeyboard
 import com.pluang.imagesearchapp.ui.main.adapter.PhotoAdapter
 import com.pluang.imagesearchapp.utils.SEARCH_KEY
-import timber.log.Timber
 import android.content.Intent
+import android.util.Log
+import com.pluang.imagesearchapp.BuildConfig
 import com.pluang.imagesearchapp.utils.NetworkHelper
-import com.pluang.imagesearchapp.utils.PHOTO_KEY
-import com.pluang.imagesearchapp.utils.POSITION_KEY
+import com.pluang.imagesearchapp.utils.PHOTO_PARAM
+import com.pluang.imagesearchapp.utils.POSITION_PARAM
 import com.pluang.imagesearchapp.utils.Utils.isEmpty
 import javax.inject.Inject
 
@@ -43,6 +41,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), BaseListItemCallback<Photo> {
     private lateinit var photoAdapter: PhotoAdapter
+
     @Inject
     lateinit var networkHelper: NetworkHelper
     private val mainViewModel by viewModels<MainViewModel>()
@@ -126,8 +125,8 @@ class MainActivity : AppCompatActivity(), BaseListItemCallback<Photo> {
     override fun onItemClicked(item: Photo) {
         super.onItemClicked(item)
         val intent = Intent(applicationContext, DetailsActivity::class.java)
-        intent.putParcelableArrayListExtra(PHOTO_KEY, ArrayList(mainViewModel.Photos))
-        intent.putExtra(POSITION_KEY, mainViewModel.Photos.indexOf(item))
+        intent.putParcelableArrayListExtra(PHOTO_PARAM, ArrayList(mainViewModel.Photos))
+        intent.putExtra(POSITION_PARAM, mainViewModel.Photos.indexOf(item))
         startActivity(intent)
     }
 

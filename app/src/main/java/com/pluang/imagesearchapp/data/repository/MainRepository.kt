@@ -1,15 +1,10 @@
 package com.pluang.imagesearchapp.data.repository
 
-import android.app.Activity
-import android.content.Context
-import androidx.lifecycle.LiveData
-import android.util.Log
+
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import com.pluang.imagesearchapp.data.api.ApiService
 import com.pluang.imagesearchapp.data.database.entities.Photo
 import com.pluang.imagesearchapp.data.database.repository.PhotoRepository
-import com.pluang.imagesearchapp.extension.Coroutines
 import com.pluang.imagesearchapp.extension.Status
 import com.pluang.imagesearchapp.paging.BaseApiService
 import com.pluang.imagesearchapp.utils.LIMIT
@@ -28,8 +23,6 @@ class MainRepository @Inject constructor(
 
         try {
             networkState.postValue(Status.LOADING)
-
-            Log.e("networkHelper",networkHelper.isNetworkConnected().toString())
             if (networkHelper.isNetworkConnected()) {
                 val response = apiService.getImages(searchKey, LIMIT, offset)
 
@@ -45,7 +38,7 @@ class MainRepository @Inject constructor(
             {
                 val responseLocal = photoRepository.getLocalPhotos(searchKey, LIMIT, offset)
 
-                if (responseLocal != null && responseLocal.size > 0) {
+                if (responseLocal.size > 0) {
                     networkState.postValue(Status.SUCCESS)
                     return responseLocal
                 } else {

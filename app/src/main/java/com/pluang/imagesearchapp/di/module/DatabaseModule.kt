@@ -23,7 +23,7 @@ object DatabaseModule {
         return Room.databaseBuilder(app,
             PhotoDatabase::class.java, PhotoDatabase.DB_NAME)
             .allowMainThreadQueries()
-//            .fallbackToDestructiveMigration()
+            .fallbackToDestructiveMigration()
             .build()
     }
 
@@ -32,7 +32,6 @@ object DatabaseModule {
     fun providesPhotoDao(db: PhotoDatabase): photoDao {
         return db.getPhotoDao()
     }
-
 
     @Singleton
     @Provides

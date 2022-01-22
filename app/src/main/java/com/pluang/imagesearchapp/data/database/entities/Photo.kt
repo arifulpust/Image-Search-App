@@ -49,8 +49,7 @@ data class Photo(
     fun imageUrl() : String {
         /**
         https://live.staticflickr.com/{server-id}/{id}_{secret}_{size-suffix}.jpg
-        https://live.staticflickr.com/{server}/{id}_{secret}_{size-suffix}.jpg
-         */
+         **/
 
         return "https://live.staticflickr.com/"+server+"/"+id+"_"+secret+"_w.jpg"
 

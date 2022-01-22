@@ -3,12 +3,17 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/assignment/ImageSearchApp/app/src/main/res/drawable/background_curve.xml" value="0.19270833333333334" />
+        <entry key="..\:/assignment/ImageSearchApp/app/src/main/res/drawable/bottom_round_white_bg.xml" value="0.19270833333333334" />
+        <entry key="..\:/assignment/ImageSearchApp/app/src/main/res/drawable/ic_back.xml" value="0.19270833333333334" />
+        <entry key="..\:/assignment/ImageSearchApp/app/src/main/res/drawable/ic_search_song.xml" value="0.19270833333333334" />
         <entry key="..\:/assignment/ImageSearchApp/app/src/main/res/layout/activity_details.xml" value="0.18" />
         <entry key="..\:/assignment/ImageSearchApp/app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="..\:/assignment/ImageSearchApp/app/src/main/res/layout/fragment_base_single_list.xml" value="0.1" />
         <entry key="..\:/assignment/ImageSearchApp/app/src/main/res/layout/load_state_footer_view_item.xml" value="0.1" />
         <entry key="..\:/assignment/ImageSearchApp/app/src/main/res/layout/photo_details_layout.xml" value="0.1" />
         <entry key="..\:/assignment/ImageSearchApp/app/src/main/res/layout/photo_item_layout.xml" value="0.1" />
+        <entry key="..\:/assignment/ImageSearchApp/app/src/main/res/menu/main_menu.xml" value="0.15833333333333333" />
       </map>
     </option>
   </component>

@@ -1,8 +1,6 @@
 package com.pluang.imagesearchapp.data.database.Dao
-
 import androidx.room.*
 import com.pluang.imagesearchapp.data.database.entities.Photo
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface photoDao {

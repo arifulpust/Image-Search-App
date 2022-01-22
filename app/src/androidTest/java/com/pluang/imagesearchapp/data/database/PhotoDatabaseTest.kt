@@ -46,7 +46,6 @@ class PhotoDatabaseTest : TestCase(){
         val spend=  Photo(1, 1, "", "", "","","cat","","","")
         dao.insert(spend)
         val count=  dao.getCount()
-    Log.e("Count",count.toString())
         Assert.assertEquals(count>0, true)
     }
     @Test
@@ -55,12 +54,9 @@ class PhotoDatabaseTest : TestCase(){
         {
             val photo=  Photo(id.toLong(), id.toLong(), "", "", "","","cat","","","")
           dao.insert(photo)
-
         }
         val count=  dao.getCount()
-
         val photos=  dao.getPhotos("cat",20,0)
-        Log.e("Count",count.toString())
         Assert.assertEquals(photos.size==20, true)
         Assert.assertEquals(count==20L, true)
     }
