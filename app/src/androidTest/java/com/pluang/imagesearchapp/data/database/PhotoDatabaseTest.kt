@@ -53,14 +53,15 @@ class PhotoDatabaseTest : TestCase(){
     fun writeReadTwentyPhoto()= runBlocking {
         for(id in 1..20)
         {
-            val spend=  Photo(id.toLong(), id.toLong(), "", "", "","","cat","","","")
-          dao.insert(spend)
+            val photo=  Photo(id.toLong(), id.toLong(), "", "", "","","cat","","","")
+          dao.insert(photo)
 
         }
-       // val count=  dao.getCount()
+        val count=  dao.getCount()
 
-        val count=  dao.getPhotos("cat",20,0)
+        val photos=  dao.getPhotos("cat",20,0)
         Log.e("Count",count.toString())
-        Assert.assertEquals(count.size==20, true)
+        Assert.assertEquals(photos.size==20, true)
+        Assert.assertEquals(count==20L, true)
     }
 }
