@@ -12,30 +12,22 @@ class PhotoRepositoryImpl (private val dao: photoDao):
         return dao.insert(schedule)
     }
 
-//    override suspend fun delete(schedule: Schedule): Int {
-//        return dao.delete(schedule)
-//    }
-
-    override  fun getAllSchedule(): Flow<List<Photo>> {
-        return dao.getAllSchedule()
+    override suspend  fun getItemId(item:Long):List<Photo>
+    {
+      return  dao.findPhoto(item)!!
     }
 
-    override suspend fun getScheduleByContentId(contentId: Long): Photo?  {
-        return dao.getScheduleByContentId(contentId)
+    override suspend fun deleteAllPhotos() {
+        return  dao.deleteAll()
     }
 
-//    override  fun getScheduleByName(name: String): Flow<List<Photo>> {
-//        return dao.getScheduleByName(name)
-//    }
-
-
-//    override suspend fun updateScheduleByContentId(
-//        contentId: Long, notes: String
-//    ): Int {
-//        return dao.updateScheduleByContentId(contentId,notes)
-//    }
-
-    override suspend fun deleteByContentId(contentId: Long) {
-        return dao.deleteByContentId(contentId)
+    override suspend fun getTotalPhotos():Long {
+        return  dao.getCount()
     }
+
+    override suspend fun getLocalPhotos(searckKey: String, limit: Int, offset: Int): List<Photo> {
+        return  dao.getPhotos(searckKey,limit,offset)
+    }
+
+
 }

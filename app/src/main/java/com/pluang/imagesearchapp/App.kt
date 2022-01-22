@@ -7,20 +7,23 @@ import coil.imageLoader
 import com.facebook.stetho.Stetho
 import com.pluang.imagesearchapp.data.interceptor.CoilInterceptor
 import com.pluang.imagesearchapp.di.module.AppCoroutineScope
+import com.pluang.imagesearchapp.di.module.CoilCache
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
+import okhttp3.Cache
 import okhttp3.OkHttpClient
 import javax.inject.Inject
 
 @HiltAndroidApp
 class App : Application()
 {
+
     @Inject
     @AppCoroutineScope
     lateinit var coroutineScope: CoroutineScope
     @Inject lateinit var coilInterceptor: CoilInterceptor
-//    @CoilCache
-//    lateinit var coilCache: Cache
+    @CoilCache
+    lateinit var coilCache: Cache
     override fun onCreate() {
     super.onCreate()
     Stetho.initializeWithDefaults(this)
@@ -33,7 +36,7 @@ class App : Application()
 
             okHttpClient {
                 OkHttpClient.Builder()
-                   // .cache(coilCache)
+                    //.cache(coilCache)
                     .addInterceptor(coilInterceptor)
                     .build()
             }
@@ -46,10 +49,10 @@ class App : Application()
     override fun onTrimMemory(level: Int) {
         super.onTrimMemory(level)
 
-        with(imageLoader) {
-            bitmapPool.clear()
-            memoryCache.clear()
-        }
+//        with(imageLoader) {
+//            bitmapPool.clear()
+//            memoryCache.clear()
+//        }
     }
 
 }

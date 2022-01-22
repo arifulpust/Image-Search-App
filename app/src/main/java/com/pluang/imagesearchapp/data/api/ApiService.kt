@@ -10,9 +10,9 @@ interface ApiService {
 
     @GET("https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key="+KEY+"&format=json&nojsoncallback=1&sort=relevance")
     suspend fun getImages(
-        @Query("per_page") perPage: Int,
-        @Query("page") page: Int,
         @Query("text") searchKey: String,
+        @Query("per_page") perPage: Int,
+        @Query("page") page: Int
     ): Response<PhotosResponse>
 
 

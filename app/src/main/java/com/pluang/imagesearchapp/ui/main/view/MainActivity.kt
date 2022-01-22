@@ -5,7 +5,6 @@ import android.text.TextWatcher
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
 import com.pluang.imagesearchapp.databinding.ActivityMainBinding
 import com.pluang.imagesearchapp.paging.BaseListItemCallback
 import com.pluang.imagesearchapp.ui.main.viewmodel.MainViewModel
@@ -15,173 +14,147 @@ import kotlinx.coroutines.flow.collectLatest
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
-import com.pluang.imagesearchapp.R
+import android.view.View
 import android.view.inputmethod.EditorInfo
+import androidx.core.view.isVisible
+import androidx.lifecycle.Observer
+
 import androidx.core.widget.doAfterTextChanged
+import androidx.lifecycle.lifecycleScope
+import androidx.paging.LoadState
 import androidx.paging.map
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
+import com.pluang.imagesearchapp.R
 import com.pluang.imagesearchapp.data.database.entities.Photo
+import com.pluang.imagesearchapp.extension.Status
 import com.pluang.imagesearchapp.extension.hideKeyboard
 import com.pluang.imagesearchapp.ui.main.adapter.PhotoAdapter
 import com.pluang.imagesearchapp.utils.SEARCH_KEY
+import timber.log.Timber
+import android.content.Intent
+import com.pluang.imagesearchapp.utils.NetworkHelper
+import com.pluang.imagesearchapp.utils.PHOTO_KEY
+import com.pluang.imagesearchapp.utils.POSITION_KEY
+import com.pluang.imagesearchapp.utils.Utils.isEmpty
+import javax.inject.Inject
 
 
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(), BaseListItemCallback<Photo>  {
-    private lateinit var adapters: PhotoAdapter
-
+class MainActivity : AppCompatActivity(), BaseListItemCallback<Photo> {
+    private lateinit var photoAdapter: PhotoAdapter
+    @Inject
+    lateinit var networkHelper: NetworkHelper
     private val mainViewModel by viewModels<MainViewModel>()
     private var _binding: ActivityMainBinding? = null
     private val binding get() = _binding!!
     private var searchWatcher: TextWatcher? = null
     private var search: String = ""
-
+    var collumn: Int = 2
+    var gridLayoutManager: GridLayoutManager? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        _binding = ActivityMainBinding.inflate(layoutInflater)
+        _binding = ActivityMainBinding.inflate(layoutInflater).apply {
+            viewModel = mainViewModel
+        }
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
-
-        adapters = PhotoAdapter(this)
-
-                binding.recPhoto.layoutManager = LinearLayoutManager(this)
-        binding.recPhoto.adapter = adapters
-        binding.etSearch.setOnEditorActionListener( { v, actionId, event ->
+        photoAdapter = PhotoAdapter(this)
+        gridLayoutManager = GridLayoutManager(applicationContext, collumn)
+        binding.recPhoto.apply {
+            layoutManager = gridLayoutManager
+            adapter = photoAdapter
+        }
+        binding.etSearch.setOnEditorActionListener({ v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-hideKeyboard()
+                hideKeyboard()
                 observeLatestDataList()
                 true
             } else false
         })
-
-
-
         searchWatcher = binding.etSearch.doAfterTextChanged {
             search = it.toString()
-            SEARCH_KEY=search.trim()
-
+            SEARCH_KEY = search.trim()
         }
-
     }
+
+    fun loadingState() {
+        mainViewModel.mainRepository.networkState.observe(this, Observer { state ->
+            when (state) {
+                Status.LOADING -> {
+                    binding.progressbar.visibility = View.VISIBLE
+                }
+                else -> {
+                    binding.progressbar.visibility = View.GONE
+                }
+            }
+        })
+    }
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val inflater: MenuInflater = menuInflater
         inflater.inflate(R.menu.main_menu, menu)
         return true
     }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle item selection
         return when (item.itemId) {
             R.id.collumn_two -> {
+                changeSpan(2)
                 true
             }
             R.id.collumn_three -> {
+                changeSpan(3)
                 true
             }
             R.id.collumn_four -> {
+                changeSpan(4)
                 true
             }
             else -> super.onOptionsItemSelected(item)
         }
     }
 
+    fun changeSpan(count: Int) {
+        if (collumn != count) {
+            collumn = count
+            gridLayoutManager?.setSpanCount(collumn)
+            photoAdapter.notifyDataSetChanged()
+        }
+    }
+
     override fun onItemClicked(item: Photo) {
         super.onItemClicked(item)
-        Log.e("item",item.toString())
-
+        val intent = Intent(applicationContext, DetailsActivity::class.java)
+        intent.putParcelableArrayListExtra(PHOTO_KEY, ArrayList(mainViewModel.Photos))
+        intent.putExtra(POSITION_KEY, mainViewModel.Photos.indexOf(item))
+        startActivity(intent)
     }
 
     private fun observeLatestDataList() {
-        Log.e("SEARCH_KEY",SEARCH_KEY)
-     lifecycleScope.launchWhenResumed {
-            adapters.refresh()
+        if (isEmpty(SEARCH_KEY)) {
+            binding.recPhoto.visibility = View.GONE
+            return
+        }
+        lifecycleScope.launchWhenResumed {
+            photoAdapter.refresh()
+            binding.recPhoto.visibility = View.VISIBLE
+            loadingState()
+            if (mainViewModel.Photos.size > 0)
+                mainViewModel.Photos.clear()
             mainViewModel.loadLatestData().collectLatest {
-                adapters.submitData(it.map { channel ->
-//                    try {
-//                        if (scheduleList?.size!!>0 && scheduleList!=null)
-//                        {
-//                            for(list in scheduleList!!){
-//                                if (channel.id==list.id){
-//                                    Log.e("list.note","list.note"+list.note)
-//                                    //    Log.e("list.note","list.note"+scheduleList?.size)
-//                                    channel.apply {
-//                                        note = list.note
-//                                    }
-//                                }
-//
-//
-//                            }
-//                        }
-//                    } catch (e: Exception) {
-//                    }
-
-                   // mainViewModel.insertData(channel)
-                    channel
+                photoAdapter.submitData(it.map { photo ->
+                    mainViewModel.Photos.add(photo)
+                    if (networkHelper.isNetworkConnected()) {
+                        mainViewModel.insertPhoto(photo)
+                    }
+                    photo
                 })
             }
 
 
         }
     }
-//    private fun searchList(name:String){
-//
-//        binding.etSearch.visibility=View.VISIBLE
-//
-//        lifecycleScope.launchWhenStarted {
-//            mainViewModel.getSearchData(name).collectLatest {
-//                Log.e("UPLOAD 2", "Collecting ->>> ${it.size}")
-//                if(it.isNotEmpty())
-//                {
-//                    binding.recyclerView.visibility=View.INVISIBLE
-//                    binding.recyclerViewSearch.visibility=View.VISIBLE
-//                    Log.e("data","data"+it.size)
-//                    searchData(it)
-//                }
-//                else{
-//                    binding.recyclerView.visibility=View.VISIBLE
-//                    binding.recyclerViewSearch.visibility=View.GONE
-//                }
-//
-//            }
-//        }
-//
-//    }
-
-//    private fun observeList() {
-//
-//        Handler().postDelayed({
-//            binding.placeholder.visibility=View.GONE
-//            binding.etSearch.visibility=View.VISIBLE
-//            binding.recyclerViewOffline.visibility=View.VISIBLE
-//            binding.recyclerView.visibility=View.GONE
-//
-//            lifecycleScope.launchWhenStarted {
-//                mainViewModel.getData().collectLatest {
-//                    Log.e("UPLOAD 2", "Collecting ->>> ${it.size}")
-//                    if(it.isNotEmpty())
-//                    {
-//
-//                        Log.e("data","data"+it.size)
-//                        data(it)
-//                    }
-//                    else{
-//
-//                    }
-//
-//                }
-//            }
-//        }, 600)
-//
-//    }
-
-
-//    fun searchData( scheduleList: List<Schedule>){
-//        binding.recyclerViewSearch.layoutManager =LinearLayoutManager(this)
-//        scheduleAdapter = ScheduleAdapter(this, scheduleList,this)
-//        binding.recyclerViewSearch.adapter = scheduleAdapter
-//    }
-
-
 
 
 }

@@ -13,7 +13,7 @@ import com.pluang.imagesearchapp.data.database.entities.Photo
     exportSchema = false)
 
 abstract class PhotoDatabase : RoomDatabase() {
-    abstract fun getScheduleDao(): photoDao
+    abstract fun getPhotoDao(): photoDao
 
 
     companion object {

@@ -6,6 +6,6 @@ import javax.inject.Inject
 
 class ApiHelperImpl @Inject constructor(private val apiService: ApiService) : ApiHelper {
 
-    override suspend fun getImages(perPage:Int,page:Int,searchKey:String): Response<PhotosResponse> = apiService.getImages(perPage,page,searchKey)
+    override suspend fun getImages(searchKey:String,perPage:Int,page:Int): Response<PhotosResponse> = apiService.getImages(searchKey,perPage,page)
 
 }

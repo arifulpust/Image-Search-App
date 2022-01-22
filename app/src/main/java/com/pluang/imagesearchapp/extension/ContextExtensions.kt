@@ -2,6 +2,9 @@ package com.pluang.imagesearchapp.extension
 
 import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.Build
 import android.os.Bundle
 import android.os.SystemClock
 import android.view.View
@@ -10,6 +13,9 @@ import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 fun Context.showToast(message: String, length: Int = Toast.LENGTH_SHORT) {
@@ -40,7 +46,16 @@ inline fun <reified T : Any> newIntent(context: Context): Intent =
 fun View.setVisibility(isVisible: Boolean){
     this.visibility = if(isVisible) View.VISIBLE else View.GONE
 }
+object Coroutines {
 
+    fun main(work: suspend (() -> Unit)) = CoroutineScope(Dispatchers.Main).launch {
+        work()
+    }
+
+    fun IO(work: suspend (() -> Unit)) = CoroutineScope(Dispatchers.IO).launch {
+        work()
+    }
+}
 fun MotionLayout.onTransitionCompletedListener(onCompleted:(transitionId: Int) -> Unit){
     this.addTransitionListener(object : MotionLayout.TransitionListener{
         override fun onTransitionStarted(motion: MotionLayout?, startId: Int, endId: Int) {

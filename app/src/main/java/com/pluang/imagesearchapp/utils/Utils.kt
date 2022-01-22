@@ -19,22 +19,15 @@ object Utils {
     fun loadChannelImageOne(view: ImageView, imageUrl: String?){
 
       view.load(imageUrl) {
-                transformations(CircleCropTransformation())
+             //   transformations(CircleCropTransformation())
                 crossfade(false)
               //  fallback(R.drawable.ic_menu_profile)
                // placeholder(R.drawable.ic_menu_profile)
             }
     }
-
-    @BindingAdapter("loadNote")
-    @JvmStatic
-    fun loadNote(view: ImageView, text: String?){
-        if (text.equals("")){
-            view.visibility= View.GONE
-        }
-        else{
-            view.visibility= View.VISIBLE
-        }
+    fun isEmpty(str: String?): Boolean {
+        return str == null || str!!.isEmpty() || str.trim() == ""
     }
+
 }
 

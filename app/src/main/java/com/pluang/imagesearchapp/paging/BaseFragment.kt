@@ -5,5 +5,4 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 open class BaseFragment: Fragment() {
-
 }

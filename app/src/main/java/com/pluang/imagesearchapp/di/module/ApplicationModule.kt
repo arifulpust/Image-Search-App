@@ -10,11 +10,11 @@ import com.pluang.imagesearchapp.data.api.ApiService
 import com.pluang.imagesearchapp.data.interceptor.CoilInterceptor
 
 import com.squareup.moshi.Moshi
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
@@ -28,46 +28,21 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Qualifier
 import javax.inject.Singleton
 import okhttp3.Cache
-//@Qualifier
-//annotation class DefaultCache
-//@Qualifier
-//annotation class CoilCache
+import retrofit2.converter.gson.GsonConverterFactory
+
+@Qualifier
+annotation class DefaultCache
+@Qualifier
+annotation class CoilCache
 
 @Qualifier
 annotation class AppCoroutineScope
 @Module
 @InstallIn(SingletonComponent::class)
 class ApplicationModule {
-//
 
-//    @Singleton
-//    @Provides
-//    fun provideMoshi(): Moshi {
-//        return Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
-//    }
     @Provides
     fun provideBaseUrl() = BuildConfig.BASE_URL
-
-//    @Provides
-//    @Singleton
-//    fun provideOkHttpClient(): OkHttpClient {
-//        val clientBuilder = OkHttpClient.Builder().apply {
-//            connectTimeout(60, TimeUnit.SECONDS)
-//            readTimeout(60, TimeUnit.SECONDS)
-//            retryOnConnectionFailure(false)
-//            if (BuildConfig.DEBUG) {
-//                addInterceptor(HttpLoggingInterceptor().also {
-//                    it.level = HttpLoggingInterceptor.Level.BODY
-//                })
-//            }
-//
-//           // cache(cache)
-//           // addInterceptor(CoilInterceptor())
-//        }
-//        if (BuildConfig.DEBUG) clientBuilder.addNetworkInterceptor(StethoInterceptor())
-//
-//        return clientBuilder.build()
-//    }
 
     @Provides
     @Singleton
@@ -96,13 +71,23 @@ class ApplicationModule {
         Retrofit.Builder()
          // .addConverterFactory(MoshiConverterFactory.create())
             .baseUrl(url)
-
-           // .addConverterFactory(MoshiConverterFactory.create(Moshi.Builder().add(KotlinJsonAdapterFactory()).build()))
-            //.addCallAdapterFactory(LiveDataCallAdapterFactory())
-
+            .addConverterFactory(GsonConverterFactory.create())
             .client(okHttpClient)
             .build()
+//    @Provides
+//    @Singleton
+//    @DefaultCache
+//    fun getCacheIterator(@ApplicationContext ctx: Context): Cache{
+//        val cacheSize = 100 * 1024 * 1024 // 100 MB
+//        return Cache(ctx.cacheDir, cacheSize.toLong())
+//    }
 
+    @Provides
+    @Singleton
+    @CoilCache
+    fun getCoilCache(@ApplicationContext ctx: Context): Cache {
+        return CoilUtils.createDefaultCache(ctx)
+    }
     @Provides
     @Singleton
     fun provideApiService(retrofit: Retrofit): ApiService = retrofit.create(ApiService::class.java)

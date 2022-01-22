@@ -8,20 +8,15 @@ import kotlinx.coroutines.flow.Flow
 interface photoDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(photo: Photo): Long
+    @Query("SELECT * FROM photo WHERE id = :id LIMIT 1")
+    suspend fun findPhoto(id: Long): List<Photo>
+    @Query("DELETE FROM photo")
+    fun deleteAll()
 
-    @Delete
-    suspend fun delete(photo: Photo): Int
+    @Query("SELECT COUNT(*) from photo")
+    fun getCount(): Long
+   @Query("SELECT * FROM photo where  title LIKE '%' || :searchKey || '%'   order by save_id ASC limit :limit OFFSET :offset")
+   fun getPhotos(searchKey:String?,limit:Int,offset:Int): List<Photo>
 
-    @Query("SELECT * FROM photo")
-    fun getAllSchedule(): Flow<List<Photo>>
 
-   // @Query("Select * from photo where  login LIKE :name OR  note LIKE :name")
-  //  @Query("Select * from photo ")
-  //  fun getScheduleByName(name: String): Flow<List<Photo>>
-
-    @Query("SELECT * FROM photo WHERE id == :contentId")
-    fun getScheduleByContentId(contentId: Long): Photo?
-
-    @Query("DELETE FROM photo WHERE id ==:contentId")
-    suspend fun deleteByContentId(contentId: Long)
 }

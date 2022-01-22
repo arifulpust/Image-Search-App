@@ -32,16 +32,8 @@ Log.e("api ","call")
             chain.proceed(request)
         }
         catch (e: Exception) {
-            if (e.message?.contains("url", ignoreCase = true) == true) {
-                val url = request.url
-               // val deleted = deleteCacheEntry(url)
-
-
-                // retry now that cache is deborked
-                chain.proceed(request)
-            } else {
                 throw IOException(e.message)
-            }
+
         }
 
     }
@@ -51,7 +43,7 @@ Log.e("api ","call")
         val originalHttpUrl = original.url
         Log.e("request",originalHttpUrl.toString())
             val requestBuilder = original.newBuilder()
-             //   .addHeader("Authorization", SPOTIFY_BASIC_TOKEN )
+             //   .addHeader("Authorization", " )
                 .url(originalHttpUrl)
             return requestBuilder.build()
 

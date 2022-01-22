@@ -29,14 +29,14 @@ object DatabaseModule {
 
     @Provides
     @Singleton
-    fun providesSchedulerDao(db: PhotoDatabase): photoDao {
-        return db.getScheduleDao()
+    fun providesPhotoDao(db: PhotoDatabase): photoDao {
+        return db.getPhotoDao()
     }
 
 
     @Singleton
     @Provides
-    fun providesSchedulerRepository(dao: photoDao): PhotoRepository {
+    fun providesPhotoRepository(dao: photoDao): PhotoRepository {
         return PhotoRepositoryImpl(dao)
     }
 }

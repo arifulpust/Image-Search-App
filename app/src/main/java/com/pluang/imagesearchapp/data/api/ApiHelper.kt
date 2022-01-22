@@ -5,5 +5,5 @@ import retrofit2.Response
 
 interface ApiHelper {
 
-    suspend fun getImages(perPage:Int,page:Int,searchKey:String): Response<PhotosResponse>
+    suspend fun getImages(searchKey:String,perPage:Int,page:Int): Response<PhotosResponse>
 }
