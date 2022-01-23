@@ -27,13 +27,12 @@ companion object{
         try {
             networkState.postValue(Status.LOADING)
             if (networkHelper.isNetworkConnected()) {
-                val response = apiService.getImages(searchKey, LIMIT, offsetCount)
+                val response = apiService.getImages(searchKey, LIMIT, offset)
 
                 if (response.body()!!.photos.photo.size > 0) {
-                    offsetCount+=response.body()!!.photos.photo.size
                     Log.d("response",response.body()!!.photos.toString())
-
                     networkState.postValue(Status.SUCCESS)
+                    offsetCount+=response.body()!!.photos.photo.size
                     return response.body()!!.photos.photo
                 } else {
                     networkState.postValue(Status.SUCCESS)
@@ -42,10 +41,12 @@ companion object{
 
             } else
             {
-                val responseLocal = photoRepository.getLocalPhotos(searchKey, LIMIT, offset)
+                val responseLocal = photoRepository.getLocalPhotos(searchKey, LIMIT, offsetCount)
 
                 if (responseLocal.size > 0) {
                     networkState.postValue(Status.SUCCESS)
+                    offsetCount+=responseLocal.size
+
                     Log.d("response",responseLocal.toString())
                     return responseLocal
                 } else {

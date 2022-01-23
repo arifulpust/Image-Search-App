@@ -27,6 +27,7 @@ import com.pluang.imagesearchapp.extension.Status
 import com.pluang.imagesearchapp.extension.hideKeyboard
 import com.pluang.imagesearchapp.ui.main.adapter.PhotoAdapter
 import android.content.Intent
+import com.pluang.imagesearchapp.App.Companion.isInternetConnected
 import com.pluang.imagesearchapp.data.repository.MainRepository.Companion.offsetCount
 import com.pluang.imagesearchapp.utils.*
 import com.pluang.imagesearchapp.utils.Utils.isEmpty
@@ -47,6 +48,7 @@ class MainActivity : AppCompatActivity(), BaseListItemCallback<Photo> {
     private var search: String = ""
     var collumn: Int = 2
     var gridLayoutManager: GridLayoutManager? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityMainBinding.inflate(layoutInflater).apply {
@@ -72,6 +74,7 @@ class MainActivity : AppCompatActivity(), BaseListItemCallback<Photo> {
             SEARCH_KEY = search.trim()
         }
         NetworkConnection(this).observe(this, Observer {
+            isInternetConnected=it
             if(it&&mainViewModel.Photos.size>0)
             {
                 observeLatestDataList()
