@@ -2,7 +2,6 @@ package com.pluang.imagesearchapp.paging
 import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.pluang.imagesearchapp.App.Companion.isInternetConnected
 import com.pluang.imagesearchapp.data.repository.MainRepository.Companion.offsetCount
 import com.pluang.imagesearchapp.utils.SEARCH_KEY
 
@@ -11,13 +10,11 @@ class BaseNetworkPagingSource<T: Any>(private val service: BaseApiService<T>): P
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, T> {
         val page = params.key ?: 1
-        Log.e("load"+offsetCount,page.toString())
 
         return try {
-            var count= if(offsetCount==0) 20 else offsetCount
-            if((count/20)<(page-1))
+            if((offsetCount/20+1)<(page-1))
             {
-                Log.e("load->"+offsetCount,page.toString())
+                Log.d("load->"+offsetCount,page.toString())
                 LoadResult.Error(Error("error"))
             }
             else {

@@ -1,4 +1,5 @@
 package com.pluang.imagesearchapp.ui.main.adapter
+import android.util.Log
 import com.pluang.imagesearchapp.R
 import com.pluang.imagesearchapp.data.database.entities.Photo
 import com.pluang.imagesearchapp.databinding.PhotoItemLayoutBinding
@@ -17,6 +18,7 @@ class PhotoAdapter(
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
         val photo = getItem(position)
         photo?.let {
+            Log.e("image",photo.imageUrl())
             holder.bind(photo, callback, position)
         }
     }

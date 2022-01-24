@@ -13,7 +13,7 @@ interface photoDao {
 
     @Query("SELECT COUNT(*) from photo")
     fun getCount(): Long
-   @Query("SELECT * FROM photo where  title LIKE '%' || :searchKey || '%'   order by save_id ASC limit :limit OFFSET :offset")
+   @Query("SELECT * FROM photo where  title LIKE '%' || :searchKey || '%'   order by title  ASC ,save_id limit :limit OFFSET :offset")
    fun getPhotos(searchKey:String?,limit:Int,offset:Int): List<Photo>
 
 
