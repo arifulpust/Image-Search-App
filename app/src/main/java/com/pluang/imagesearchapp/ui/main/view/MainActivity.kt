@@ -26,13 +26,10 @@ import com.pluang.imagesearchapp.data.database.entities.Photo
 import com.pluang.imagesearchapp.extension.Status
 import com.pluang.imagesearchapp.extension.hideKeyboard
 import com.pluang.imagesearchapp.ui.main.adapter.PhotoAdapter
-import com.pluang.imagesearchapp.utils.SEARCH_KEY
 import android.content.Intent
-import android.util.Log
-import com.pluang.imagesearchapp.BuildConfig
-import com.pluang.imagesearchapp.utils.NetworkHelper
-import com.pluang.imagesearchapp.utils.PHOTO_PARAM
-import com.pluang.imagesearchapp.utils.POSITION_PARAM
+import com.pluang.imagesearchapp.App.Companion.isInternetConnected
+import com.pluang.imagesearchapp.data.repository.MainRepository.Companion.offsetCount
+import com.pluang.imagesearchapp.utils.*
 import com.pluang.imagesearchapp.utils.Utils.isEmpty
 import javax.inject.Inject
 
@@ -51,6 +48,7 @@ class MainActivity : AppCompatActivity(), BaseListItemCallback<Photo> {
     private var search: String = ""
     var collumn: Int = 2
     var gridLayoutManager: GridLayoutManager? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityMainBinding.inflate(layoutInflater).apply {
@@ -75,6 +73,13 @@ class MainActivity : AppCompatActivity(), BaseListItemCallback<Photo> {
             search = it.toString()
             SEARCH_KEY = search.trim()
         }
+        NetworkConnection(this).observe(this, Observer {
+            isInternetConnected=it
+            if(it&&mainViewModel.Photos.size>0)
+            {
+                observeLatestDataList()
+            }
+        })
     }
 
     fun loadingState() {
@@ -135,6 +140,8 @@ class MainActivity : AppCompatActivity(), BaseListItemCallback<Photo> {
             binding.recPhoto.visibility = View.GONE
             return
         }
+        offsetCount=0
+
         lifecycleScope.launchWhenResumed {
             photoAdapter.refresh()
             binding.recPhoto.visibility = View.VISIBLE
@@ -142,11 +149,14 @@ class MainActivity : AppCompatActivity(), BaseListItemCallback<Photo> {
             if (mainViewModel.Photos.size > 0)
                 mainViewModel.Photos.clear()
             mainViewModel.loadLatestData().collectLatest {
-                photoAdapter.submitData(it.map { photo ->
+                photoAdapter.submitData(
+
+                    it.map { photo ->
                     mainViewModel.Photos.add(photo)
                     if (networkHelper.isNetworkConnected()) {
                         mainViewModel.insertPhoto(photo)
                     }
+
                     photo
                 })
             }

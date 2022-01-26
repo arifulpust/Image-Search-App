@@ -1,6 +1,7 @@
 package com.pluang.imagesearchapp.data.repository
 
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.pluang.imagesearchapp.data.api.ApiService
 import com.pluang.imagesearchapp.data.database.entities.Photo
@@ -18,7 +19,9 @@ class MainRepository @Inject constructor(
 
 ) : BaseApiService<Photo> {
     var networkState: MutableLiveData<Status> = MutableLiveData()
-
+companion object{
+    var offsetCount:Int=0
+}
     override suspend fun loadData(offset: Int, searchKey: String): List<Photo> {
 
         try {
@@ -27,7 +30,9 @@ class MainRepository @Inject constructor(
                 val response = apiService.getImages(searchKey, LIMIT, offset)
 
                 if (response.body()!!.photos.photo.size > 0) {
+                    Log.d("response",response.body()!!.photos.toString())
                     networkState.postValue(Status.SUCCESS)
+                    offsetCount+=response.body()!!.photos.photo.size
                     return response.body()!!.photos.photo
                 } else {
                     networkState.postValue(Status.SUCCESS)
@@ -36,10 +41,13 @@ class MainRepository @Inject constructor(
 
             } else
             {
-                val responseLocal = photoRepository.getLocalPhotos(searchKey, LIMIT, offset)
+                val responseLocal = photoRepository.getLocalPhotos(searchKey, LIMIT, offsetCount)
 
                 if (responseLocal.size > 0) {
                     networkState.postValue(Status.SUCCESS)
+                    offsetCount+=responseLocal.size
+
+                    Log.d("response",responseLocal.toString())
                     return responseLocal
                 } else {
                     networkState.postValue(Status.ERROR)

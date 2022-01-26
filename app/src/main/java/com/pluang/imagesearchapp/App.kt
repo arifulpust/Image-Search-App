@@ -54,6 +54,9 @@ class App : Application()
 //            memoryCache.clear()
 //        }
     }
+    companion object{
+        var isInternetConnected:Boolean=false
+    }
 
 }
 
