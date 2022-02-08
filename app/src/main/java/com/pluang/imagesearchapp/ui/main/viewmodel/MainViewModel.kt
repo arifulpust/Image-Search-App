@@ -15,12 +15,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    val mainRepository: MainRepository,
+     val mainRepository: MainRepository,
     private val photoRepository: PhotoRepository
 
 ) : ViewModel() {
-    var Photos: MutableList<Photo> = arrayListOf()
-    var index: Int = 0
+     var Photos: MutableList<Photo> = arrayListOf()
+    var index:Int=0
     fun loadLatestData(): Flow<PagingData<Photo>> {
         return BaseListRepositoryImpl({
             BaseNetworkPagingSource(
@@ -28,15 +28,17 @@ class MainViewModel @Inject constructor(
             )
         }).getList().cachedIn(viewModelScope)
     }
-
     fun insertPhoto(data: Photo) {
         viewModelScope.launch {
             try {
-                val photos = photoRepository.getItemId(data.id)
-                if (photos.size == 0) {
-                    photoRepository.insert(data)
+                val photos= photoRepository. getItemId(data.id)
+                if(photos==null||photos.size==0)
+                {
+               photoRepository.insert(data)
                 }
-            } catch (e: Exception) {
+            }
+            catch (e:Exception)
+            {
             }
 
 
